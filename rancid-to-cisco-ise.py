@@ -27,7 +27,7 @@ def get_rancid_devices():
         return []
 
 # Function to add a device to Cisco ISE
-def add_ise_device(name, ip_address):
+def add_ise_device(name, ip_address, device_type, tacacs_password):
     # Set the request headers
     headers = {
         "Content-Type": "application/json",
@@ -38,7 +38,11 @@ def add_ise_device(name, ip_address):
     payload = {
         "name": name,
         "description": "Added by RANCID sync script",
-        "ipAddress": ip_address
+        "ipAddress": ip_address,
+        "networkDeviceType": device_type,
+        "tacacsProperties": {
+            "password": tacacs_password
+        }
     }
 
     # Send a request to the Cisco ISE server to add the device
@@ -74,9 +78,9 @@ for ise_device in ise_devices:
     # Check if the device is in the list of devices from RANCID
     found = False
     for rancid_device in rancid_devices:
-    if rancid_device["name"] == ise_device["name"]:
-        found = True
-        break
+        if rancid_device["name"] == ise_device["name"]:
+            found = True
+            break
     if not found:
         # Device was not found in RANCID, so delete it from Cisco ISE
         status_code = delete_ise_device(ise_device["name"])
@@ -95,7 +99,7 @@ for rancid_device in rancid_devices:
             break
     if not found:
         # Device was not found in Cisco ISE, so add it
-        status_code = add_ise_device(rancid_device["name"], rancid_device["ipAddress"])
+        status_code = add_ise_device(rancid_device["name"], rancid_device["ipAddress"], rancid_device["type"], rancid_device["tacacsPassword"])
         if status_code == 201:
             print(f"Successfully added device {rancid_device['name']} to Cisco ISE")
         else:
