@@ -1,0 +1,1 @@
+This script retrieves the list of devices from both RANCID and Cisco ISE, and then compares the two lists. If it finds a device in the Cisco ISE list that is not in the RANCID list, it deletes the device from Cisco ISE. If it finds a device in the RANCID list that is not in the Cisco ISE list, it adds the device to Cisco ISE, including the device type and TACACS password.
